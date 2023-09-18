@@ -1,7 +1,14 @@
-import {View, Text, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  Alert,
+  StyleSheet,
+  Dimensions,
+  ImageBackground,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import axios, {AxiosRequestConfig} from 'axios';
-import {TextInput} from 'react-native-paper';
+import {TextInput, Button} from 'react-native-paper';
 
 const LOGIN_API = 'http://10.0.2.2:8000/api/user/login';
 
@@ -41,51 +48,77 @@ export default function SignIn(): JSX.Element {
     });
   };
 
+  const handleOnPasswordVisibility = (id: id) =>
+    setUser(prev => {
+      const updateUser: userCredentialType = {...prev};
+      updateUser[id].isVisible = !updateUser[id].isVisible;
+      return updateUser;
+    });
+
   return (
-    <View>
-      {/* <Text style={{color: 'red'}}>{user}</Text> */}
-      <TextInput
-        mode="outlined"
-        // secureTextEntry={type === 'password' ? isShowPassword : false}
-        label={'Email'}
-        value={user?.email?.value}
-        keyboardType={'email-address'}
-        // left={leftIcon && <TextInput.Icon icon={leftIcon} />}
-        // right={
-        //   type === 'password' && (
-        //     <TextInput.Icon
-        //       icon={isShowPassword ? 'eye' : 'eye-off'}
-        //       onPress={() => setIsShowPassword(prev => !prev)}
-        //     />
-        //   )
-        // }
-        onChangeText={text => handleOnChange(text, 'email')}
-      />
-      <TextInput
-        mode="outlined"
-        // secureTextEntry={type === 'password' ? isShowPassword : false}
-        label={'Password'}
-        value={user?.password?.value}
-        // left={leftIcon && <TextInput.Icon icon={leftIcon} />}
-        right={
-          // type === 'password' && (
-          <TextInput.Icon
-            icon={true ? 'eye' : 'eye-off'}
-            onPress={() =>
-              setUser(prev => {
-                const updateUser: userCredentialType = {...prev};
-                updateUser['password'].isVisible =
-                  !updateUser['password'].isVisible;
-                return updateUser;
-              })
-            }
-          />
-          // )
-        }
-        // secureTextEntry={false}
-        secureTextEntry={user['password'].isVisible}
-        onChangeText={text => handleOnChange(text, 'password')}
-      />
-    </View>
+    <ImageBackground
+      source={{
+        uri: 'https://th.bing.com/th/id/OIG.m4EAmpM7rxt_ar91kVeX?pid=ImgGn.png',
+      }}
+      style={styles.container}>
+      <View style={styles.card}>
+        <TextInput
+          mode="outlined"
+          label={'Email'}
+          style={[styles.mv]}
+          value={user?.email?.value}
+          keyboardType={'email-address'}
+          left={<TextInput.Icon icon={'gmail'} />}
+          onChangeText={text => handleOnChange(text, 'email')}
+        />
+        <TextInput
+          mode="outlined"
+          label={'Password'}
+          style={[styles.mv]}
+          value={user?.password?.value}
+          left={<TextInput.Icon icon={'lock'} />}
+          right={
+            <TextInput.Icon
+              icon={user?.password?.isVisible ? 'eye' : 'eye-off'}
+              onPress={() => handleOnPasswordVisibility('password')}
+            />
+          }
+          secureTextEntry={user.password.isVisible}
+          onChangeText={text => handleOnChange(text, 'password')}
+        />
+
+        <Button
+          contentStyle={{flexDirection: 'row-reverse'}}
+          style={[styles.button]}
+          icon={'arrow-right-thin'}
+          mode="contained"
+          onPress={() => console.log('Pressed')}>
+          Submit
+        </Button>
+      </View>
+    </ImageBackground>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 10,
+    display: 'flex',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  card: {
+    maxWidth: 500,
+    display: 'flex',
+    height: 200,
+  },
+  button: {
+    maxWidth: 300,
+    minWidth: 200,
+    alignSelf: 'center',
+    marginVertical: 5,
+  },
+  mv: {
+    marginVertical: 5,
+  },
+});
