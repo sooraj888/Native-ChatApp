@@ -30,14 +30,16 @@ export default function SignIn(): JSX.Element {
   );
 
   const callApi = async () => {
-    const payload: any = {
-      email: 'guest@user.com',
-      password: '12345678',
-    };
-    const axiosConfig: AxiosRequestConfig<any> = {
-      headers: {'Content-Type': 'application/json'},
-    };
-    const {data} = await axios.post('', payload, axiosConfig);
+    if (user?.email?.value.trim() && user?.password?.value.trim()) {
+      const payload: any = {
+        email: user?.email?.value,
+        password: user?.password?.value,
+      };
+      const axiosConfig: AxiosRequestConfig<any> = {
+        headers: {'Content-Type': 'application/json'},
+      };
+      const {data} = await axios.post('', payload, axiosConfig);
+    }
   };
 
   const handleOnChange = (text: string, id: id) => {
@@ -65,7 +67,7 @@ export default function SignIn(): JSX.Element {
         <TextInput
           mode="outlined"
           label={'Email'}
-          style={[styles.mv]}
+          style={[styles.mv, styles.input]}
           value={user?.email?.value}
           keyboardType={'email-address'}
           left={<TextInput.Icon icon={'gmail'} />}
@@ -74,7 +76,7 @@ export default function SignIn(): JSX.Element {
         <TextInput
           mode="outlined"
           label={'Password'}
-          style={[styles.mv]}
+          style={[styles.mv, styles.input]}
           value={user?.password?.value}
           left={<TextInput.Icon icon={'lock'} />}
           right={
@@ -92,7 +94,7 @@ export default function SignIn(): JSX.Element {
           style={[styles.button]}
           icon={'arrow-right-thin'}
           mode="contained"
-          onPress={() => console.log('Pressed')}>
+          onPress={() => callApi()}>
           Submit
         </Button>
       </View>
@@ -116,9 +118,12 @@ const styles = StyleSheet.create({
     maxWidth: 300,
     minWidth: 200,
     alignSelf: 'center',
-    marginVertical: 5,
+    marginVertical: 10,
   },
   mv: {
     marginVertical: 5,
+  },
+  input: {
+    backgroundColor: 'transparent',
   },
 });

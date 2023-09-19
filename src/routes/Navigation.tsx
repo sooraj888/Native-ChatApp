@@ -14,6 +14,7 @@ import SignUP from '../screens/SignUP';
 import ChatList from '../screens/ChatList';
 import Chat from '../screens/Chat';
 import {Alert} from 'react-native';
+import SplashScreen from '../screens/SplashScreen';
 
 const Stack = createStackNavigator();
 
@@ -21,6 +22,7 @@ function Navigation(): JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="SignIn" component={SighIn} />
         <Stack.Screen name="SignUP" component={SignUP} />
         <Stack.Screen name="ChatList" component={ChatList} />
