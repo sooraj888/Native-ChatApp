@@ -5,10 +5,12 @@ import {
   StyleSheet,
   Dimensions,
   ImageBackground,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import axios, {AxiosRequestConfig} from 'axios';
 import {TextInput, Button} from 'react-native-paper';
+// import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 
 const LOGIN_API = 'http://10.0.2.2:8000/api/user/login';
 
@@ -68,6 +70,7 @@ export default function SignUP(): JSX.Element {
         uri: 'https://th.bing.com/th/id/OIG.m4EAmpM7rxt_ar91kVeX?pid=ImgGn.png',
       }}
       style={styles.container}>
+      {/* <BottomSheetModalProvider> */}
       <View style={styles.card}>
         <TextInput
           mode="outlined"
@@ -126,6 +129,24 @@ export default function SignUP(): JSX.Element {
           onPress={() => callApi()}>
           Submit
         </Button>
+      </View>
+      {/* </BottomSheetModalProvider> */}
+
+      <View
+        // ref={bottomSheetCloseViewRef}
+        style={{
+          backgroundColor: 'rgba(0,0,0,0.4)',
+          position: 'absolute',
+
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          display: 'none',
+        }}>
+        <TouchableWithoutFeedback onPress={() => {}}>
+          <View style={{flex: 1}}></View>
+        </TouchableWithoutFeedback>
       </View>
     </ImageBackground>
   );

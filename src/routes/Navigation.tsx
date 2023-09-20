@@ -21,7 +21,9 @@ const Stack = createStackNavigator();
 function Navigation(): JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Navigator
+        screenOptions={{headerShown: false}}
+        initialRouteName="SignUP">
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="SignIn" component={SighIn} />
         <Stack.Screen name="SignUP" component={SignUP} />

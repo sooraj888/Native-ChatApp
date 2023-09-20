@@ -9,8 +9,8 @@ import {
 import React, {useEffect, useState} from 'react';
 import axios, {AxiosRequestConfig} from 'axios';
 import {TextInput, Button} from 'react-native-paper';
-
-const LOGIN_API = 'http://10.0.2.2:8000/api/user/login';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {callLoginApi} from '../api/userApi';
 
 type userCredentialType = {
   email: {value: string; isVisible: boolean};
@@ -24,23 +24,10 @@ const initialUserCredentialState = {
   password: {value: '', isVisible: true},
 };
 
-export default function SignIn(): JSX.Element {
+export default function SignIn({navigation}: any): JSX.Element {
   const [user, setUser] = useState<userCredentialType>(
     initialUserCredentialState,
   );
-
-  const callApi = async () => {
-    if (user?.email?.value.trim() && user?.password?.value.trim()) {
-      const payload: any = {
-        email: user?.email?.value,
-        password: user?.password?.value,
-      };
-      const axiosConfig: AxiosRequestConfig<any> = {
-        headers: {'Content-Type': 'application/json'},
-      };
-      const {data} = await axios.post('', payload, axiosConfig);
-    }
-  };
 
   const handleOnChange = (text: string, id: id) => {
     setUser(prev => {
@@ -56,6 +43,16 @@ export default function SignIn(): JSX.Element {
       updateUser[id].isVisible = !updateUser[id].isVisible;
       return updateUser;
     });
+
+  const handleOnSubmit = async () => {
+    const {isLoggedIn}: any = await callLoginApi(
+      user?.email?.value,
+      user?.password?.value,
+    );
+    if (isLoggedIn) {
+      navigation.navigate('ChatList');
+    }
+  };
 
   return (
     <ImageBackground
@@ -94,7 +91,7 @@ export default function SignIn(): JSX.Element {
           style={[styles.button]}
           icon={'arrow-right-thin'}
           mode="contained"
-          onPress={() => callApi()}>
+          onPress={handleOnSubmit}>
           Submit
         </Button>
       </View>
