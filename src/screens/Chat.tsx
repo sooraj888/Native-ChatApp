@@ -27,7 +27,6 @@ export default function Chat({navigation}: any): JSX.Element {
       <Button
         mode="contained"
         onPress={() => {
-          Alert.alert('Chat');
           navigation.navigate('ChatList');
         }}>
         Chat List

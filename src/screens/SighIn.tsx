@@ -11,17 +11,21 @@ import axios, {AxiosRequestConfig} from 'axios';
 import {TextInput, Button} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {callLoginApi} from '../api/userApi';
+import Input from '../components/Input';
+import PasswordInput from '../components/PasswordInput';
+import {CommonActions} from '@react-navigation/native';
+import BottomSigningNav from '../components/BottomSigningNav';
 
 type userCredentialType = {
-  email: {value: string; isVisible: boolean};
-  password: {value: string; isVisible: boolean};
+  email: string;
+  password: string;
 };
 
 type id = 'email' | 'password';
 
 const initialUserCredentialState = {
-  email: {value: '', isVisible: false},
-  password: {value: '', isVisible: true},
+  email: '',
+  password: '',
 };
 
 export default function SignIn({navigation}: any): JSX.Element {
@@ -32,25 +36,25 @@ export default function SignIn({navigation}: any): JSX.Element {
   const handleOnChange = (text: string, id: id) => {
     setUser(prev => {
       const updateUser = {...prev};
-      updateUser[id].value = text;
+      updateUser[id] = text;
       return updateUser;
     });
   };
 
-  const handleOnPasswordVisibility = (id: id) =>
-    setUser(prev => {
-      const updateUser: userCredentialType = {...prev};
-      updateUser[id].isVisible = !updateUser[id].isVisible;
-      return updateUser;
-    });
-
   const handleOnSubmit = async () => {
-    const {isLoggedIn}: any = await callLoginApi(
-      user?.email?.value,
-      user?.password?.value,
+    const {isLoggedIn, message}: any = await callLoginApi(
+      user?.email.trim(),
+      user?.password.trim(),
     );
     if (isLoggedIn) {
-      navigation.navigate('ChatList');
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: 'ChatList'}],
+        }),
+      );
+    } else {
+      Alert.alert(message);
     }
   };
 
@@ -61,28 +65,16 @@ export default function SignIn({navigation}: any): JSX.Element {
       }}
       style={styles.container}>
       <View style={styles.card}>
-        <TextInput
-          mode="outlined"
+        <Input
+          leftIcon={'gmail'}
           label={'Email'}
-          style={[styles.mv, styles.input]}
-          value={user?.email?.value}
-          keyboardType={'email-address'}
-          left={<TextInput.Icon icon={'gmail'} />}
+          value={user?.email}
           onChangeText={text => handleOnChange(text, 'email')}
         />
-        <TextInput
-          mode="outlined"
+
+        <PasswordInput
           label={'Password'}
-          style={[styles.mv, styles.input]}
-          value={user?.password?.value}
-          left={<TextInput.Icon icon={'lock'} />}
-          right={
-            <TextInput.Icon
-              icon={user?.password?.isVisible ? 'eye' : 'eye-off'}
-              onPress={() => handleOnPasswordVisibility('password')}
-            />
-          }
-          secureTextEntry={user.password.isVisible}
+          value={user?.password}
           onChangeText={text => handleOnChange(text, 'password')}
         />
 
@@ -94,6 +86,12 @@ export default function SignIn({navigation}: any): JSX.Element {
           onPress={handleOnSubmit}>
           Submit
         </Button>
+        <BottomSigningNav
+          style={{flex: 7, paddingHorizontal: 30}}
+          message={"Don't have account ? "}
+          buttonText={'Sign Up'}
+          navigateScreenName={'SignUp'}
+        />
       </View>
     </ImageBackground>
   );

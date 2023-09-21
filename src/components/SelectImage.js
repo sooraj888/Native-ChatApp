@@ -34,7 +34,7 @@ export default function SelectImage({
       compressImageQuality: 0.4,
     }).then(image => {
       handleConvertImageToBase64(image?.path);
-      // setFile(image);
+
       setImage({uri: image?.path});
     });
   };
@@ -46,7 +46,7 @@ export default function SelectImage({
     RNImageToBase64.getBase64String(imagePath)
       .then(base64String => {
         // setBase64Image(base64String);
-        setFile(base64String);
+        setFile(`data:image/png;base64,{${base64String}}`);
       })
       .catch(err => console.log(err));
   };

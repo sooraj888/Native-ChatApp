@@ -10,11 +10,19 @@ import React from 'react';
 import Navigation from './routes/Navigation';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import 'react-native-gesture-handler';
-
+import {PaperProvider} from 'react-native-paper';
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import {NavigationContainer} from '@react-navigation/native';
 function App(): JSX.Element {
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <Navigation />
+      <NavigationContainer>
+        <BottomSheetModalProvider>
+          <PaperProvider>
+            <Navigation />
+          </PaperProvider>
+        </BottomSheetModalProvider>
+      </NavigationContainer>
     </GestureHandlerRootView>
   );
 }

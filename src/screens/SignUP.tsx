@@ -6,6 +6,7 @@ import {
   Dimensions,
   ImageBackground,
   TouchableWithoutFeedback,
+  Image,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import axios, {AxiosRequestConfig} from 'axios';
@@ -13,63 +14,73 @@ import {TextInput, Button} from 'react-native-paper';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import ImagePickerModal from '../components/ImagePickerModal';
 import DEFAULT_PROFILE_IMAGE from '../assets/default_profile.png';
+import PasswordInput from '../components/PasswordInput';
+import Input from '../components/Input';
+import BottomSigningNav from '../components/BottomSigningNav';
+import {callSignUpApi} from '../api/userApi';
+import {CommonActions} from '@react-navigation/native';
 
-const LOGIN_API = 'http://10.0.2.2:8000/api/user/login';
+const LOGIN_API = 'http://10.0.2.2:8000/api/user';
 
 type userCredentialType = {
-  name: {value: string; isSecuredText: boolean};
-  email: {value: string; isSecuredText: boolean};
-  password: {value: string; isSecuredText: boolean};
-  confirmPassword: {value: string; isSecuredText: boolean};
-  pic: {value: string; isSecuredText: boolean};
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
 };
 
 type id = 'email' | 'password' | 'confirmPassword' | 'name';
 
 const initialUserCredentialState = {
-  name: {value: '', isSecuredText: false},
-  email: {value: '', isSecuredText: false},
-  password: {value: '', isSecuredText: true},
-  confirmPassword: {value: '', isSecuredText: true},
-  pic: {value: '', isSecuredText: false},
+  name: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
 };
 
-export default function SignUP(): JSX.Element {
+export default function SignUP({navigation}: any): JSX.Element {
   const bottomSheetRef = useRef<any>(null);
   const bottomSheetCloseViewRef = useRef<any>();
-  const [file, setFile] = useState<any>(null);
+  const [file, setFile] = useState<string>('');
 
   const [user, setUser] = useState<userCredentialType>(
     initialUserCredentialState,
   );
+
   const [image, setImage] = useState(DEFAULT_PROFILE_IMAGE);
 
+  const {email, name, password, confirmPassword} = user;
+
   const callApi = async () => {
-    const payload: any = {
-      email: 'guest@user.com',
-      password: '12345678',
-    };
-    const axiosConfig: AxiosRequestConfig<any> = {
-      headers: {'Content-Type': 'application/json'},
-    };
-    const {data} = await axios.post(LOGIN_API, payload, axiosConfig);
-    console.log(data);
+    if (!email && !name && !password && !confirmPassword) {
+      Alert.alert('Enter all filed');
+      return;
+    }
+    const {isLoggedIn, message}: any = await callSignUpApi(
+      email,
+      password,
+      name,
+      file,
+    );
+    if (isLoggedIn) {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{name: 'ChatList'}],
+        }),
+      );
+    } else {
+      Alert.alert(message);
+    }
   };
 
   const handleOnChange = (text: string, id: id) => {
     setUser(prev => {
       const updateUser = {...prev};
-      updateUser[id].value = text;
+      updateUser[id] = text;
       return updateUser;
     });
   };
-
-  const handleOnPasswordVisibility = (id: id) =>
-    setUser(prev => {
-      const updateUser: userCredentialType = {...prev};
-      updateUser[id].isSecuredText = !updateUser[id].isSecuredText;
-      return updateUser;
-    });
 
   const closeBottomTab = () => {
     bottomSheetRef.current?.close();
@@ -77,69 +88,43 @@ export default function SignUP(): JSX.Element {
   };
 
   return (
-    // <BottomSheetModalProvider>
     <ImageBackground
       source={{
         uri: 'https://th.bing.com/th/id/OIG.m4EAmpM7rxt_ar91kVeX?pid=ImgGn.png',
       }}
       style={styles.container}>
-      {/* <View style={[styles.card]}> */}
-      <ImagePickerModal
-        bottomSheetRef={bottomSheetRef}
-        bottomSheetCloseViewRef={bottomSheetCloseViewRef}
-        setFile={setFile}
-        image={image}
-        setImage={setImage}
-      />
-      <TextInput
-        outlineStyle={{zIndex: 1}}
-        contentStyle={{zIndex: 1}}
-        underlineStyle={{zIndex: 1}}
-        mode="outlined"
+      <View style={{alignItems: 'center', marginBottom: 20}}>
+        <ImagePickerModal
+          bottomSheetRef={bottomSheetRef}
+          bottomSheetCloseViewRef={bottomSheetCloseViewRef}
+          setFile={setFile}
+          image={image}
+          setImage={setImage}
+        />
+      </View>
+
+      <Input
+        leftIcon={'account-edit'}
         label={'Name'}
-        style={[styles.mv, styles.input]}
-        value={user?.name?.value}
-        keyboardType={'email-address'}
-        left={<TextInput.Icon icon={'account-edit'} />}
+        value={user?.name}
         onChangeText={text => handleOnChange(text, 'name')}
       />
-      <TextInput
-        mode="outlined"
+
+      <Input
+        leftIcon={'gmail'}
         label={'Email'}
-        style={[styles.mv, styles.input]}
-        value={user?.email?.value}
-        keyboardType={'email-address'}
-        left={<TextInput.Icon icon={'gmail'} />}
+        value={user?.email}
         onChangeText={text => handleOnChange(text, 'email')}
       />
-      <TextInput
-        mode="outlined"
+
+      <PasswordInput
         label={'Password'}
-        style={[styles.mv, styles.input]}
-        value={user?.password?.value}
-        left={<TextInput.Icon icon={'lock'} />}
-        right={
-          <TextInput.Icon
-            icon={user?.password?.isSecuredText ? 'eye' : 'eye-off'}
-            onPress={() => handleOnPasswordVisibility('password')}
-          />
-        }
-        secureTextEntry={user.password.isSecuredText}
+        value={user?.password}
         onChangeText={text => handleOnChange(text, 'password')}
       />
-      <TextInput
-        mode="outlined"
+      <PasswordInput
         label={'Confirm Password'}
-        style={[styles.mv, styles.input]}
-        value={user?.confirmPassword?.value}
-        left={<TextInput.Icon icon={'lock'} />}
-        right={
-          <TextInput.Icon
-            icon={user?.confirmPassword?.isSecuredText ? 'eye' : 'eye-off'}
-            onPress={() => handleOnPasswordVisibility('confirmPassword')}
-          />
-        }
-        secureTextEntry={user.confirmPassword.isSecuredText}
+        value={user?.confirmPassword}
         onChangeText={text => handleOnChange(text, 'confirmPassword')}
       />
 
@@ -151,7 +136,14 @@ export default function SignUP(): JSX.Element {
         onPress={() => callApi()}>
         Submit
       </Button>
-      {/* </View> */}
+
+      <BottomSigningNav
+        style={{flex: 7, paddingHorizontal: 30}}
+        message={'Already have an account ? '}
+        buttonText={'Sign In'}
+        navigateScreenName={'SignIn'}
+      />
+
       <View
         ref={bottomSheetCloseViewRef}
         style={{
@@ -174,7 +166,6 @@ export default function SignUP(): JSX.Element {
         </TouchableWithoutFeedback>
       </View>
     </ImageBackground>
-    // </BottomSheetModalProvider>
   );
 }
 

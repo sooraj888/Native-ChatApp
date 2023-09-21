@@ -27,7 +27,14 @@ export default function ImagePickerModal({
   const handleSheetChanges = useCallback(index => {}, []);
 
   return (
-    <View style={{padding: 5, zIndex: 2, elevation: 3}}>
+    <View
+      style={{
+        padding: 5,
+        width: 140,
+        height: 140,
+        borderRadius: 100,
+        zIndex: 2,
+      }}>
       <View
         style={{
           width: '100%',
@@ -73,14 +80,12 @@ export default function ImagePickerModal({
           margin: 0,
           height: 0,
           zIndex: 5,
-          elevation: 3,
         }}
         backgroundStyle={{
           borderRadius: 0,
           padding: 0,
           margin: 0,
           zIndex: 0,
-          elevation: 3,
         }}
         style={{zIndex: 20}}
         ref={bottomSheetRef}
