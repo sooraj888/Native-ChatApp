@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, StyleProp, TextStyle} from 'react-native';
 import React, {useState} from 'react';
 import {TextInput} from 'react-native-paper';
 import {IconSource} from 'react-native-paper/lib/typescript/components/Icon';
@@ -8,6 +8,8 @@ type inputType = {
   value?: string;
   label?: string;
   leftIcon?: IconSource;
+  style?: StyleProp<TextStyle>;
+  onFocus?: () => void;
 };
 
 export default function Input({
@@ -15,16 +17,20 @@ export default function Input({
   onChangeText,
   label,
   leftIcon,
+  style,
+  onFocus,
 }: inputType) {
   return (
     <TextInput
       accessibilityIgnoresInvertColors={false}
       //   mode="outlined"
+      onFocus={onFocus}
       label={label}
       style={[styles.input]}
       value={value}
       left={leftIcon && <TextInput.Icon icon={leftIcon} />}
       onChangeText={onChangeText}
+      contentStyle={style}
     />
   );
 }

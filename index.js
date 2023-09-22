@@ -13,12 +13,12 @@ const AppRedux = () => {
   return (
     // <Provider store={store}>
     <>
-      <StatusBar
+      {/* <StatusBar
         hidden={true}
         // barStyle={'dark-content'}
         translucent={true}
         backgroundColor={'rgba(0,0,0,0)'}
-      />
+      /> */}
       <App />
     </>
     // </Provider>

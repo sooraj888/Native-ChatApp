@@ -22,7 +22,7 @@ export const callLoginApi = async (
         data['password'] = password;
 
         AsyncStorage.setItem('user', JSON.stringify(data), e => {
-          console.log('Error :', e);
+          // console.log('Error :', e);
         });
 
         return {isLoggedIn: true, message: ''};
@@ -65,7 +65,7 @@ export const callSignUpApi = async (
         data['password'] = password;
 
         AsyncStorage.setItem('user', JSON.stringify(data), e => {
-          console.log('Error :', e);
+          // console.log('Error :', e);
         });
 
         return {isLoggedIn: true, message: ''};
@@ -79,5 +79,32 @@ export const callSignUpApi = async (
     }
   } else {
     Alert.alert('Please Enter Email and Password');
+  }
+};
+
+const SEARCH_API = 'http://10.0.2.2:8000/api/user?search=';
+
+export type callSearchApiType = {
+  data: any;
+  error: boolean;
+  errorMessage: string;
+};
+
+export const callSearchApi = async (
+  searchText: string,
+  token: string,
+): Promise<callSearchApiType> => {
+  const axiosConfig: AxiosRequestConfig<any> = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  try {
+    const {data} = await axios.get(SEARCH_API + searchText.trim(), axiosConfig);
+    console.log(data);
+    return {data: data, error: false, errorMessage: ''};
+  } catch (e: any) {
+    console.log(JSON.stringify(e));
+    return {data: '', error: true, errorMessage: e.message};
   }
 };
