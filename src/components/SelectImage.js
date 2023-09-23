@@ -48,7 +48,7 @@ export default function SelectImage({
         // setBase64Image(base64String);
         setFile(`data:image/png;base64,{${base64String}}`);
       })
-      .catch(err => console.log(err));
+      .catch(err => {});
   };
   return (
     <View style={styles.contentContainer}>

@@ -1,6 +1,7 @@
 import axios, {AxiosRequestConfig} from 'axios';
+import {API_URL} from './getApi';
 
-const CREATE_GROUP_API = 'http://10.0.2.2:8000/api/chat/group';
+const CREATE_GROUP_API = API_URL + '/api/chat/group';
 
 export type createGroupApiType = {
   data: any;

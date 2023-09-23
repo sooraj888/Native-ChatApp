@@ -49,7 +49,6 @@ export default function ChatList({navigation}: any): JSX.Element {
     );
     if (data && !error) {
       setChatList(data);
-      console.log(data);
     }
   };
 
@@ -73,7 +72,7 @@ export default function ChatList({navigation}: any): JSX.Element {
   }, []);
 
   return (
-    <View style={{display: 'flex'}}>
+    <View style={{display: 'flex', flex: 1}}>
       <View
         style={{
           display: 'flex',
@@ -115,27 +114,38 @@ export default function ChatList({navigation}: any): JSX.Element {
           </TouchableOpacity>
         </View>
       )}
-      {isSearchListSelected ? (
-        <FlatList
-          style={{marginTop: 5}}
-          data={searchData}
-          renderItem={({item}) => (
-            <UserList
-              size="md"
-              user={item}
-              selectedUser={handleOnSelectedUser}
-            />
-          )}
-          keyExtractor={item => item?._id}
-        />
-      ) : (
-        <FlatList
-          style={{marginTop: 5}}
-          data={chatList}
-          renderItem={({item}) => <ChatListItem chat={item} />}
-          keyExtractor={item => item?._id}
-        />
-      )}
+      <View
+        style={{
+          display: 'flex',
+          flex: 1,
+          width: '100%',
+          height: 30,
+          paddingVertical: 5,
+        }}>
+        {isSearchListSelected ? (
+          <FlatList
+            style={{marginTop: 5}}
+            data={searchData}
+            renderItem={({item}) => (
+              <UserList
+                size="md"
+                user={item}
+                selectedUser={handleOnSelectedUser}
+              />
+            )}
+            keyExtractor={item => item?._id}
+          />
+        ) : (
+          <FlatList
+            style={{marginTop: 5}}
+            data={chatList}
+            renderItem={({item}) => (
+              <ChatListItem chat={item} loggedUser={user} />
+            )}
+            keyExtractor={item => item?._id}
+          />
+        )}
+      </View>
     </View>
   );
 }

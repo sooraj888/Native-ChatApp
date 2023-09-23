@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, {AxiosRequestConfig} from 'axios';
 import {Alert} from 'react-native';
+import {API_URL} from './getApi';
 
-const LOGIN_API = 'http://10.0.2.2:8000/api/user/login';
+const LOGIN_API = API_URL + '/api/user/login';
 
 export const callLoginApi = async (
   email: string,
@@ -21,14 +22,11 @@ export const callLoginApi = async (
       if (data) {
         data['password'] = password;
 
-        AsyncStorage.setItem('user', JSON.stringify(data), e => {
-          // console.log('Error :', e);
-        });
+        AsyncStorage.setItem('user', JSON.stringify(data), e => {});
 
         return {isLoggedIn: true, message: ''};
       }
     } catch (e: any) {
-      console.log(JSON.stringify(e));
       return {
         isLoggedIn: false,
         message: JSON.stringify(e?.response?.data?.message),
@@ -39,7 +37,7 @@ export const callLoginApi = async (
   }
 };
 
-const SIGN_UP_API = 'http://10.0.2.2:8000/api/user';
+const SIGN_UP_API = API_URL + '/api/user';
 
 export const callSignUpApi = async (
   email: string,
@@ -64,14 +62,11 @@ export const callSignUpApi = async (
       if (data) {
         data['password'] = password;
 
-        AsyncStorage.setItem('user', JSON.stringify(data), e => {
-          // console.log('Error :', e);
-        });
+        AsyncStorage.setItem('user', JSON.stringify(data), e => {});
 
         return {isLoggedIn: true, message: ''};
       }
     } catch (e: any) {
-      console.log(JSON.stringify(e));
       return {
         isLoggedIn: false,
         message: JSON.stringify(e?.response?.data?.message),
@@ -82,7 +77,7 @@ export const callSignUpApi = async (
   }
 };
 
-const SEARCH_API = 'http://10.0.2.2:8000/api/user?search=';
+const SEARCH_API = API_URL + '/api/user?search=';
 
 export type callSearchApiType = {
   data: any;
@@ -101,10 +96,9 @@ export const callSearchApi = async (
   };
   try {
     const {data} = await axios.get(SEARCH_API + searchText.trim(), axiosConfig);
-    console.log(data);
+
     return {data: data, error: false, errorMessage: ''};
   } catch (e: any) {
-    console.log(JSON.stringify(e));
     return {data: '', error: true, errorMessage: e.message};
   }
 };
