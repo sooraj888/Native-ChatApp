@@ -25,8 +25,4 @@ const AppRedux = () => {
   );
 };
 
-const Aa = () => {
-  return <Text>sfasda</Text>;
-};
-
 AppRegistry.registerComponent(appName, () => AppRedux);

@@ -18,15 +18,20 @@ export const callLoginApi = async (
       // headers: {'Content-Type': 'application/json'},
     };
     try {
+      console.log('start');
       const {data} = await axios.post(LOGIN_API, payload, axiosConfig);
+      console.log(data);
       if (data) {
         data['password'] = password;
 
         AsyncStorage.setItem('user', JSON.stringify(data), e => {});
 
         return {isLoggedIn: true, message: ''};
+      } else {
+        return {isLoggedIn: false, message: 'Error'};
       }
     } catch (e: any) {
+      console.log(e);
       return {
         isLoggedIn: false,
         message: JSON.stringify(e?.response?.data?.message),
