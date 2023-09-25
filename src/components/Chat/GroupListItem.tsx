@@ -17,7 +17,7 @@ export default function GroupListItem({
   return (
     <TouchableOpacity
       onPress={() => {
-        selectedUser?.(group?._id);
+        selectedUser?.(group);
       }}>
       <View style={[styles.item, {height: size == 'sm' ? 50 : 60}]}>
         <Avatar.Text

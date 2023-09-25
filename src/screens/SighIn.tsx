@@ -15,6 +15,7 @@ import Input from '../components/Input';
 import PasswordInput from '../components/PasswordInput';
 import {CommonActions} from '@react-navigation/native';
 import BottomSigningNav from '../components/BottomSigningNav';
+import {contextDataType, useContextData} from '../context/ContextData';
 
 type userCredentialType = {
   email: string;
@@ -32,6 +33,8 @@ export default function SignIn({navigation}: any): JSX.Element {
   const [user, setUser] = useState<userCredentialType>(
     initialUserCredentialState,
   );
+  const [isLoading, setIsLoading] = useState(false);
+  const {saveUserData}: contextDataType = useContextData();
 
   const handleOnChange = (text: string, id: id) => {
     setUser(prev => {
@@ -42,11 +45,13 @@ export default function SignIn({navigation}: any): JSX.Element {
   };
 
   const handleOnSubmit = async () => {
-    const {isLoggedIn, message}: any = await callLoginApi(
+    setIsLoading(true);
+    const {isLoggedIn, message, data}: any = await callLoginApi(
       user?.email.trim(),
       user?.password.trim(),
     );
-    if (isLoggedIn) {
+    if (isLoggedIn && data) {
+      saveUserData(data);
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -56,6 +61,7 @@ export default function SignIn({navigation}: any): JSX.Element {
     } else {
       Alert.alert(message);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -83,15 +89,19 @@ export default function SignIn({navigation}: any): JSX.Element {
           style={[styles.button]}
           icon={'arrow-right-thin'}
           mode="contained"
-          onPress={handleOnSubmit}>
+          onPress={handleOnSubmit}
+          loading={isLoading}
+          disabled={isLoading}>
           Submit
         </Button>
-        <BottomSigningNav
-          style={{flex: 7, paddingHorizontal: 30}}
-          message={"Don't have account ? "}
-          buttonText={'Sign Up'}
-          navigateScreenName={'SignUp'}
-        />
+        {!isLoading && (
+          <BottomSigningNav
+            style={{flex: 7, paddingHorizontal: 30}}
+            message={"Don't have account ? "}
+            buttonText={'Sign Up'}
+            navigateScreenName={'SignUp'}
+          />
+        )}
       </View>
     </ImageBackground>
   );

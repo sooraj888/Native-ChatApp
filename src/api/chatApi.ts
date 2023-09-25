@@ -49,3 +49,34 @@ export const getAllMessageApi = async (
     return {data: '', error: true, errorMessage: e.message};
   }
 };
+
+const SEND_MESSAGE = API_URL + '/api/message';
+
+export type sendMessageApiType = {
+  data: any;
+  error: boolean;
+  errorMessage: string;
+};
+
+export const sendMessageApi = async (
+  chatId: string,
+  content: string,
+  token: string,
+): Promise<sendMessageApiType> => {
+  const axiosConfig: AxiosRequestConfig<any> = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  try {
+    const {data} = await axios.post(
+      SEND_MESSAGE,
+      {chatId, content},
+      axiosConfig,
+    );
+    return {data: data, error: false, errorMessage: ''};
+  } catch (e: any) {
+    return {data: '', error: true, errorMessage: e?.response?.data?.message};
+  }
+};

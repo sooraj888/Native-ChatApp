@@ -7,19 +7,20 @@ export default function UserList({
   user,
   selectedUser,
   size,
-  selectedUserId,
+  handleOnSelectChat,
+  chat,
 }: {
   user?: any;
   selectedUser?: (id: any) => void;
-  selectedUserId?: (id: string) => void;
+  handleOnSelectChat?: (id: string) => void;
   size?: 'sm' | 'md';
+  chat?: any;
 }) {
   return (
     <TouchableOpacity
       onPress={() => {
-        const {name, email, _id} = user;
-        selectedUser?.({name, email, _id});
-        selectedUserId?.(_id);
+        selectedUser?.(user);
+        handleOnSelectChat?.(chat);
       }}>
       <View style={[styles.item, {height: size == 'sm' ? 50 : 60}]}>
         <Avatar.Image

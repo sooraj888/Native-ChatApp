@@ -51,7 +51,10 @@ export default function SignUP({navigation}: any): JSX.Element {
 
   const {email, name, password, confirmPassword} = user;
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const callApi = async () => {
+    setIsLoading(true);
     if (!email && !name && !password && !confirmPassword) {
       Alert.alert('Enter all filed');
       return;
@@ -72,6 +75,7 @@ export default function SignUP({navigation}: any): JSX.Element {
     } else {
       Alert.alert(message);
     }
+    setIsLoading(false);
   };
 
   const handleOnChange = (text: string, id: id) => {
@@ -133,16 +137,20 @@ export default function SignUP({navigation}: any): JSX.Element {
         style={[styles.button]}
         icon={'arrow-right-thin'}
         mode="contained"
+        loading={isLoading}
+        disabled={isLoading}
         onPress={() => callApi()}>
         Submit
       </Button>
 
-      <BottomSigningNav
-        style={{flex: 7, paddingHorizontal: 30}}
-        message={'Already have an account ? '}
-        buttonText={'Sign In'}
-        navigateScreenName={'SignIn'}
-      />
+      {!isLoading && (
+        <BottomSigningNav
+          style={{flex: 7, paddingHorizontal: 30}}
+          message={'Already have an account ? '}
+          buttonText={'Sign In'}
+          navigateScreenName={'SignIn'}
+        />
+      )}
 
       <View
         ref={bottomSheetCloseViewRef}

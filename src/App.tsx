@@ -13,13 +13,16 @@ import 'react-native-gesture-handler';
 import {PaperProvider} from 'react-native-paper';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import {NavigationContainer} from '@react-navigation/native';
+import ContextData from './context/ContextData';
 function App(): JSX.Element {
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <NavigationContainer>
         <BottomSheetModalProvider>
           <PaperProvider>
-            <Navigation />
+            <ContextData>
+              <Navigation />
+            </ContextData>
           </PaperProvider>
         </BottomSheetModalProvider>
       </NavigationContainer>

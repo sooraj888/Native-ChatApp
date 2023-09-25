@@ -18,7 +18,7 @@ export default function PasswordInput({
   return (
     <TextInput
       // mode="outlined"
-      label={'Confirm Password'}
+      label={label}
       style={[styles.input]}
       value={value}
       left={<TextInput.Icon icon={'lock'} />}

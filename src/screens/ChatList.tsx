@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState, useRef} from 'react';
-import {Alert, FlatList, Text, View, TouchableOpacity} from 'react-native';
+import {FlatList, Text, View, TouchableOpacity} from 'react-native';
 import {Avatar, Button, TextInput} from 'react-native-paper';
 import {Image} from 'react-native';
 import DEFAULT_PROFILE_IMAGE from '../assets/default_profile.png';
@@ -12,7 +12,8 @@ import {callSearchApi, callSearchApiType} from '../api/userApi';
 import UserList from '../components/UserList';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {callListApi, callListApiType} from '../api/chatApi';
-import ChatListItem from '../components/ChatListItem';
+import ChatListItem from '../components/Chat/ChatListItem';
+import {contextDataType, useContextData} from '../context/ContextData';
 
 export default function ChatList({navigation}: any): JSX.Element {
   const [user, setUser] = useState<any>(null);
@@ -23,6 +24,8 @@ export default function ChatList({navigation}: any): JSX.Element {
   const isFocused = useIsFocused();
   const inputRef = useRef<any>();
   const [chatList, setChatList] = useState<Array<any>>([]);
+
+  const {loggedUser, setSelectedChat}: contextDataType = useContextData();
 
   const getSearchData = async (searchText: string) => {
     const {data, error, errorMessage}: callSearchApiType = await callSearchApi(
@@ -65,7 +68,10 @@ export default function ChatList({navigation}: any): JSX.Element {
     }
   }, [user]);
 
-  const handleOnSelectedUser = (selectedUser: any) => {};
+  const handleOnSelectChat = (selectedChat: any) => {
+    setSelectedChat(selectedChat);
+    navigation.navigate('Chat');
+  };
 
   useEffect(() => {
     getUser();
@@ -130,7 +136,7 @@ export default function ChatList({navigation}: any): JSX.Element {
               <UserList
                 size="md"
                 user={item}
-                selectedUser={handleOnSelectedUser}
+                selectedUser={handleOnSelectChat}
               />
             )}
             keyExtractor={item => item?._id}
@@ -140,7 +146,11 @@ export default function ChatList({navigation}: any): JSX.Element {
             style={{marginTop: 5}}
             data={chatList}
             renderItem={({item}) => (
-              <ChatListItem chat={item} loggedUser={user} />
+              <ChatListItem
+                chat={item}
+                loggedUser={user}
+                handleOnSelectChat={handleOnSelectChat}
+              />
             )}
             keyExtractor={item => item?._id}
           />

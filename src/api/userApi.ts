@@ -2,13 +2,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, {AxiosRequestConfig} from 'axios';
 import {Alert} from 'react-native';
 import {API_URL} from './getApi';
+import {contextDataType, useContextData} from '../context/ContextData';
 
 const LOGIN_API = API_URL + '/api/user/login';
 
 export const callLoginApi = async (
   email: string,
   password: string,
-): Promise<{isLoggedIn: boolean; message: string} | undefined> => {
+): Promise<
+  {isLoggedIn?: boolean; message?: string; data?: any} | undefined
+> => {
   if (email && password) {
     const payload: any = {
       email,
@@ -24,15 +27,17 @@ export const callLoginApi = async (
       if (data) {
         data['password'] = password;
 
-        AsyncStorage.setItem('user', JSON.stringify(data), e => {});
+        // AsyncStorage.setItem('user', JSON.stringify(data), e => {});
+        // setLoggedUser(JSON.stringify(data));
 
-        return {isLoggedIn: true, message: ''};
+        return {data, isLoggedIn: true, message: ''};
       } else {
-        return {isLoggedIn: false, message: 'Error'};
+        return {data: null, isLoggedIn: false, message: 'Error'};
       }
     } catch (e: any) {
       console.log(e);
       return {
+        data: null,
         isLoggedIn: false,
         message: JSON.stringify(e?.response?.data?.message),
       };
@@ -50,7 +55,7 @@ export const callSignUpApi = async (
   name: string,
   pic?: string,
 ): Promise<{isLoggedIn: boolean; message: string} | undefined> => {
-  if (email && password && name && pic) {
+  if (email && password && name) {
     let payload: any = {
       email,
       password,
@@ -79,6 +84,10 @@ export const callSignUpApi = async (
     }
   } else {
     Alert.alert('Please Enter Email and Password');
+    return {
+      isLoggedIn: false,
+      message: 'Please Fill All Fields',
+    };
   }
 };
 
