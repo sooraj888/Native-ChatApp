@@ -11,7 +11,11 @@ import Input from '../components/Input';
 import {callSearchApi, callSearchApiType} from '../api/userApi';
 import UserList from '../components/UserList';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {callListApi, callListApiType} from '../api/chatApi';
+import {
+  callListApi,
+  callListApiType,
+  oneOnOneCreateFetchApi,
+} from '../api/chatApi';
 import ChatListItem from '../components/Chat/ChatListItem';
 import {contextDataType, useContextData} from '../context/ContextData';
 
@@ -25,7 +29,12 @@ export default function ChatList({navigation}: any): JSX.Element {
   const inputRef = useRef<any>();
   const [chatList, setChatList] = useState<Array<any>>([]);
 
-  const {loggedUser, setSelectedChat}: contextDataType = useContextData();
+  const {
+    loggedUser,
+    isListRefresh,
+    setSelectedChat,
+    setIsListRefresh,
+  }: contextDataType = useContextData();
 
   const getSearchData = async (searchText: string) => {
     const {data, error, errorMessage}: callSearchApiType = await callSearchApi(
@@ -66,11 +75,23 @@ export default function ChatList({navigation}: any): JSX.Element {
     if (user) {
       getChatList();
     }
-  }, [user]);
+  }, [user, isListRefresh]);
 
   const handleOnSelectChat = (selectedChat: any) => {
     setSelectedChat(selectedChat);
     navigation.navigate('Chat');
+  };
+
+  const handleOnSelectSearchUser = async (selectedUser: any) => {
+    const {data, error, errorMessage} = await oneOnOneCreateFetchApi(
+      selectedUser,
+      loggedUser?.token,
+    );
+    if (data) {
+      setSelectedChat(data);
+      setIsListRefresh((prev: boolean) => !prev);
+      navigation.navigate('Chat');
+    }
   };
 
   useEffect(() => {
@@ -136,7 +157,7 @@ export default function ChatList({navigation}: any): JSX.Element {
               <UserList
                 size="md"
                 user={item}
-                selectedUser={handleOnSelectChat}
+                selectedUser={handleOnSelectSearchUser}
               />
             )}
             keyExtractor={item => item?._id}

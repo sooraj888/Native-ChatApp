@@ -7,7 +7,6 @@ const getOppositeUser = (userList, loggedUser) => {
 };
 
 const isSameSender = ([...messages], m, i, userId) => {
-  // console.log(i);
   return (
     i <= messages?.length - 1 &&
     (messages[i - 1]?.sender?._id !== m.sender._id ||

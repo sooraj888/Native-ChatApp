@@ -45,6 +45,11 @@ export default function SignIn({navigation}: any): JSX.Element {
   };
 
   const handleOnSubmit = async () => {
+    if (!user?.email.trim() || !user?.password.trim()) {
+      Alert.alert('Please Fill All Fields');
+      return;
+    }
+
     setIsLoading(true);
     const {isLoggedIn, message, data}: any = await callLoginApi(
       user?.email.trim(),
@@ -62,6 +67,10 @@ export default function SignIn({navigation}: any): JSX.Element {
       Alert.alert(message);
     }
     setIsLoading(false);
+  };
+
+  const handleOnGuestCredentials = () => {
+    setUser({email: 'guest@user.com', password: '12345678'});
   };
 
   return (
@@ -92,7 +101,16 @@ export default function SignIn({navigation}: any): JSX.Element {
           onPress={handleOnSubmit}
           loading={isLoading}
           disabled={isLoading}>
-          Submit
+          Login
+        </Button>
+        <Button
+          contentStyle={{flexDirection: 'row-reverse'}}
+          style={[styles.button, {backgroundColor: 'rgba(190,0,0,1)'}]}
+          icon={'arrow-right-thin'}
+          mode="contained"
+          onPress={handleOnGuestCredentials}
+          disabled={isLoading}>
+          Login Using Guest Credentials
         </Button>
         {!isLoading && (
           <BottomSigningNav
@@ -120,8 +138,8 @@ const styles = StyleSheet.create({
     height: 200,
   },
   button: {
-    maxWidth: 300,
-    minWidth: 200,
+    maxWidth: 400,
+    minWidth: 300,
     alignSelf: 'center',
     marginVertical: 10,
   },

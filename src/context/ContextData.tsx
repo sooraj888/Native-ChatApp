@@ -10,11 +10,14 @@ export type contextDataType = {
   saveUserData: React.Dispatch<any>;
   selectedChat: any;
   setSelectedChat: React.Dispatch<any>;
+  isListRefresh: boolean;
+  setIsListRefresh: React.Dispatch<any>;
 };
 
 export default function ContextData({children}: {children: React.ReactNode}) {
   const [loggedUser, setLoggedUser] = useState<any>(null);
   const [selectedChat, setSelectedChat] = useState<any>(null);
+  const [isListRefresh, setIsListRefresh] = useState<boolean>(false);
 
   const getUser = async () => {
     const data = JSON.parse(String(await AsyncStorage.getItem('user')));
@@ -40,6 +43,8 @@ export default function ContextData({children}: {children: React.ReactNode}) {
         saveUserData,
         selectedChat,
         setSelectedChat,
+        isListRefresh,
+        setIsListRefresh,
       }}>
       {children}
     </Context.Provider>

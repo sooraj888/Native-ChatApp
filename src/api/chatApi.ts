@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, {AxiosRequestConfig} from 'axios';
 import {Alert} from 'react-native';
 import {API_URL} from './getApi';
+import {ApiType} from './groupApi';
 
 const LIST_API = API_URL + '/api/chat';
 
@@ -73,6 +74,30 @@ export const sendMessageApi = async (
     const {data} = await axios.post(
       SEND_MESSAGE,
       {chatId, content},
+      axiosConfig,
+    );
+    return {data: data, error: false, errorMessage: ''};
+  } catch (e: any) {
+    return {data: '', error: true, errorMessage: e?.response?.data?.message};
+  }
+};
+
+const ONE_ON_ONE_CREATE_FETCH_API = API_URL + '/api/chat';
+
+export const oneOnOneCreateFetchApi = async (
+  userId: string,
+  token: string,
+): Promise<ApiType> => {
+  const axiosConfig: AxiosRequestConfig<any> = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  try {
+    const {data} = await axios.post(
+      ONE_ON_ONE_CREATE_FETCH_API,
+      {userId},
       axiosConfig,
     );
     return {data: data, error: false, errorMessage: ''};

@@ -17,11 +17,12 @@ import io from 'socket.io-client';
 
 import Message from '../components/Chat/Message';
 import {API_URL} from '../api/getApi';
+import ChatHeader from '../components/Chat/ChatHeader';
 
 var socket: any, selectedChatCompare: any;
 
 const Chat = ({navigation}: any): JSX.Element => {
-  const {loggedUser, selectedChat} = useContextData();
+  const {loggedUser, selectedChat, setIsListRefresh} = useContextData();
   const [allMessage, setAllMessage] = useState<Array<any>>([]);
   const inputRef = useRef<any>();
 
@@ -30,7 +31,6 @@ const Chat = ({navigation}: any): JSX.Element => {
   const [isTyping, setIsTyping] = useState<boolean>(false);
 
   const [typedMessage, setTypedMessage] = useState('');
-  const [count, setCount] = useState(0);
 
   const callAllMessageApi = async (chatId: string) => {
     const {data, error, errorMessage}: getAllMessageApiType =
@@ -51,6 +51,7 @@ const Chat = ({navigation}: any): JSX.Element => {
       loggedUser?.token,
     );
     if (!error && data) {
+      setIsListRefresh((pre: boolean) => !pre);
       socket.emit('new message', data);
       setAllMessage(prev => {
         const updateAllMessage: Array<any> = [...prev];
@@ -102,7 +103,6 @@ const Chat = ({navigation}: any): JSX.Element => {
 
   useEffect(() => {
     socket.on('message received', (newMessageReceived: any) => {
-      console.log(!selectedChatCompare);
       if (
         !selectedChatCompare ||
         selectedChatCompare?._id !== newMessageReceived?.chat?._id
@@ -143,7 +143,7 @@ const Chat = ({navigation}: any): JSX.Element => {
           width: '100%',
           backgroundColor: 'rgb(20, 0, 51)',
         }}>
-        {/* <Text style={{color: 'white'}}>{String(isTyping)}</Text> */}
+        <ChatHeader />
       </View>
       <View style={{flex: 1, paddingBottom: 10, paddingTop: 5}}>
         <Message allMessage={allMessage} />

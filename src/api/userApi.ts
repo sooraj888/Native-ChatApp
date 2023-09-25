@@ -23,7 +23,7 @@ export const callLoginApi = async (
     try {
       console.log('start');
       const {data} = await axios.post(LOGIN_API, payload, axiosConfig);
-      console.log(data);
+
       if (data) {
         data['password'] = password;
 
@@ -35,7 +35,6 @@ export const callLoginApi = async (
         return {data: null, isLoggedIn: false, message: 'Error'};
       }
     } catch (e: any) {
-      console.log(e);
       return {
         data: null,
         isLoggedIn: false,
